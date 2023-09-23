@@ -1,18 +1,21 @@
 import React, { useState } from 'react'
-import { Carousel, Card, Image, Row, Col, Popover, Space, Button, Rate, Tabs, } from 'antd';
+import { Carousel, Card, Image, Row, Col, Popover, Space, Button, Rate, Tabs, Typography, } from 'antd';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { setBannerAction, setDanhSachPhimAction } from '../../redux/action/QuanLyPhimAction';
 import { setHeThongRapAction } from '../../redux/action/QuanLyRapAction';
 import TabPane from 'antd/es/tabs/TabPane';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import moment from 'moment'
 
 const { Meta } = Card;
+const { Paragraph } = Typography;
 
 //LIST MOVIE
 function PhimDangChieu() {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     useEffect(() => {
         dispatch(setDanhSachPhimAction())
     }, [])
@@ -29,8 +32,8 @@ function PhimDangChieu() {
                         }}
                         cover={<img alt={phim.maPhim} src={phim.hinhAnh} style={{ height: 300 }} />}
                         actions={[
-                            <Rate allowHalf defaultValue={4.5} style={{ fontSize: 15 }} />,
-                            <Button type='link' onClick={() => { console.log('datVe') }}>Đặt Vé</Button>
+                            <Rate allowHalf disabled value={phim.danhGia / 2} style={{ fontSize: 15 }} />,
+                            <Button type='link' onClick={() => { navigate(`detail/${phim.maPhim}`) }}>Đặt Vé</Button>
                         ]}
                     >
                         <Meta title={phim.tenPhim} />
@@ -56,6 +59,8 @@ function PhimDangChieu() {
 }
 function PhimSapChieu() {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     useEffect(() => {
         dispatch(setDanhSachPhimAction())
     }, [])
@@ -72,8 +77,8 @@ function PhimSapChieu() {
                         }}
                         cover={<img alt={phim.maPhim} src={phim.hinhAnh} style={{ height: 300 }} />}
                         actions={[
-                            <Rate allowHalf defaultValue={4.5} style={{ fontSize: 15 }} />,
-                            <Button type='link' onClick={() => { console.log('datVe') }}>Đặt Vé</Button>
+                            <Rate allowHalf disabled value={phim.danhGia / 2} style={{ fontSize: 15 }} />,
+                            <Button type='link' onClick={() => { navigate(`detail/${phim.maPhim}`) }}>Đặt Vé</Button>
                         ]}
                     >
                         <Meta title={phim.tenPhim} />
@@ -149,26 +154,25 @@ export default function HomeContent() {
     const renderTheater = () => {
         return heThongRap.map((heThongRap, index) => {
             return <TabPane key={index} tab={<Popover placement='left' content={<p>{heThongRap.tenHeThongRap}</p>}> <Image src={heThongRap.logo} style={{ width: 30 }} preview={false} alt={heThongRap.tenHeThongRap} /></Popover>}>
-                <Tabs tabPosition='left' style={{ maxHeight: 450 }} >
+                <Tabs tabPosition='left' style={{ maxHeight: 450, padding: 0 }} >
                     {heThongRap.lstCumRap.map((cumRap, index) => {
-                        return <TabPane key={index} style={{ maxHeight: 450, overflowY: 'auto' }} tab={<Space ><Image src={cumRap.hinhAnh} alt={cumRap.tenCumRap} style={{ width: 30 }} preview={false} /><p style={{ width: 300, textAlign: 'left' }}>{cumRap.tenCumRap}</p></Space>}  >
-                            {/* alt={cumRap.tenCumRap} */}
+                        return <TabPane key={index} style={{ maxHeight: 450, overflowY: 'auto' }} tab={<Row><Col span={3}><Image src={cumRap.hinhAnh} alt={cumRap.tenCumRap} style={{ width: 30 }} preview={false} /></Col><Col span={21}><p style={{ width: 300, textAlign: 'left', margin: 0, fontWeight: 'bold', fontSize: 10 }}>{cumRap.tenCumRap}</p><p style={{ margin: 0 }}><Paragraph ellipsis={{ rows: 1, expandable: true, symbol: 'Địa chỉ' }} style={{ width: 50, fontSize: 10 }}>{cumRap.diaChi}</Paragraph></p></Col></Row>}  >
                             {cumRap.danhSachPhim.map((phim, index) => {
                                 return <Space key={index} direction='vertical' style={{ width: '100%', margin: 0 }}>
                                     <Card style={{ marginBottom: 20 }}>
                                         <div>
-                                            <Image src={phim.hinhAnh} alt={phim.tenPhim} preview={false} style={{ width: "100%" }} />
+                                            <Image src={phim.hinhAnh} onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = "https://picsum.photos/200"; }} alt={phim.tenPhim} preview={false} style={{ width: "100%" }} />
                                             <h3>{phim.tenPhim}</h3>
                                         </div>
                                         <div>
-                                            <p style={{ fontWeight: 'bold' }}>Địa chỉ: </p><span>{cumRap.diaChi}</span>
-                                            <p>
+                                            <p style={{ fontWeight: 'bold' }}>Suất chiếu: </p>
+                                            <Space size='middle' wrap>
                                                 {phim.lstLichChieuTheoPhim.map((lichChieu, index) => {
-                                                    return <NavLink key={index} to='/'>
+                                                    return <NavLink key={index} to={`/checkout/${lichChieu.maLichChieu}`}>
                                                         {moment(lichChieu.ngayChieuGioChieu).format('hh:mm A')}
                                                     </NavLink>
                                                 })}
-                                            </p>
+                                            </Space>
                                         </div>
                                     </Card>
                                 </Space>

@@ -1,1 +1,2 @@
 export const SET_HE_THONG_RAP = 'SET_HE_THONG_RAP'
+export const SET_FILM_DETAL = 'SET_FILM_DETAL'

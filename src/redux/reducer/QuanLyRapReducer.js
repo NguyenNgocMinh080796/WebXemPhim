@@ -1,7 +1,8 @@
-import { SET_HE_THONG_RAP } from "../type/QuanLyRapType"
+import { SET_FILM_DETAL, SET_HE_THONG_RAP } from "../type/QuanLyRapType"
 
 const initialState = {
-    heThongRap: []
+    heThongRap: [],
+    filmDetail: [],
 }
 
 export const QuanLyRapReducer = (state = initialState, action) => {
@@ -10,7 +11,10 @@ export const QuanLyRapReducer = (state = initialState, action) => {
             state.heThongRap = action.heThongRap
             return { ...state }
         }
-
+        case SET_FILM_DETAL: {
+            state.filmDetail = action.filmDetail
+            return { ...state }
+        }
         default:
             return { ...state }
     }
